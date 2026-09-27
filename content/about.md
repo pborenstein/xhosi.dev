@@ -4,7 +4,7 @@ title: About
 
 # [{{ title }}](/)
 
-This site is served from [orobia.lol](https://orobia.lol/).
+This site is served from [xhosi.dev](https://xhosi.dev/).
 
 Replace this page with your own credits, colophon, and acknowledgments.
 
