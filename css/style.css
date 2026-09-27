@@ -1,6 +1,6 @@
 :root {
-  --font-body: p22-stickley-pro-text, neue-kabel, Palatino, Georgia, serif;
-  --font-heading: neue-kabel, 'Gill Sans', 'Helvetica Neue', sans-serif;
+  --font-body: Helvetica, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: var(--font-body);
 
   /* Light theme (default) */
   --color-bg: #fffff8;
@@ -9,6 +9,9 @@
   --color-link: #555;
   --color-link-hover: #222;
   --color-border: #ccc;
+  --color-table-head: #e8edf2;
+  --color-table-stripe: #f3f6f9;
+  --color-table-rule: #d3dae1;
 }
 
 /* System dark mode */
@@ -20,6 +23,9 @@
     --color-link: #aaa;
     --color-link-hover: #ccc;
     --color-border: #333;
+  --color-table-head: #2a3039;
+  --color-table-stripe: #21252c;
+  --color-table-rule: #3b424d;
   }
 }
 
@@ -32,6 +38,9 @@ body.light-mode {
   --color-link: #555;
   --color-link-hover: #222;
   --color-border: #ccc;
+  --color-table-head: #e8edf2;
+  --color-table-stripe: #f3f6f9;
+  --color-table-rule: #d3dae1;
 }
 
 html[data-force-theme="dark"],
@@ -42,21 +51,24 @@ body.dark-mode {
   --color-link: #aaa;
   --color-link-hover: #ccc;
   --color-border: #333;
+  --color-table-head: #2a3039;
+  --color-table-stripe: #21252c;
+  --color-table-rule: #3b424d;
 }
 
 html {
-  font-size: clamp(1rem, .8rem + 1vw, 1.25rem);
+  font-size: clamp(.9375rem, .85rem + .4vw, 1.0625rem);
 }
 
 body {
-  --measure: min(90%, 48ch);
+  --measure: 56rem;
+  --prose: 42rem;
   background-color: var(--color-bg);
   color: var(--color-text);
   counter-reset: sidenote-counter;
   font-family: var(--font-body);
   margin: 0;
-  width: 100vw;
-  box-sizing: content-box;
+  box-sizing: border-box;
   margin-inline: auto;
   max-inline-size: var(--measure);
   margin-bottom: 3em;
@@ -76,20 +88,24 @@ p {
   line-height: 1.6em;
 }
 
+/* Keep running text at a readable measure; tables use the full width */
+p, ul, ol, blockquote, h1, h2, h3, h4 {
+  max-inline-size: var(--prose);
+}
+
 h1, h2 {
   font-family: var(--font-heading);
   font-weight: 600;
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 2.25em;
   padding-top: 1em;
   letter-spacing: -1.5px;
 }
 
 h2 {
   margin-bottom: .25em;
-  text-align: center;
   margin-top: 2em;
 }
 
@@ -108,7 +124,7 @@ h4 {
   font-weight: 600;
   margin-bottom: 0;
   margin-top: 3em;
-  text-align: center;
+  text-align: left;
   letter-spacing: -.04em;
 }
 
@@ -347,4 +363,70 @@ a:hover {
   display: flex;
   align-items: baseline;
   gap: 1em;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .875rem;
+  line-height: 1.45;
+  background-color: var(--color-table-stripe);
+  border: 1px solid var(--color-table-rule);
+}
+
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: .5em .75em;
+  border-bottom: 1px solid var(--color-table-rule);
+}
+
+th {
+  background-color: var(--color-table-head);
+  font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-bg);
+}
+
+td:first-child {
+  font-weight: 600;
+}
+
+td a {
+  text-decoration: underline;
+  text-decoration-color: var(--color-table-rule);
+  text-underline-offset: .15em;
+}
+
+/* Let wide tables scroll sideways on narrow screens */
+@media (max-width: 40rem) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* Section links on person pages */
+.page-toc ul {
+  padding-inline-start: 1.25em;
+  font-size: .9rem;
+}
+
+.page-toc li {
+  margin-block: .2em 0;
+}
+
+.page-toc a {
+  color: var(--color-muted);
+}
+
+.page-toc a:hover {
+  color: var(--color-text);
+}
+
+h2[id] {
+  scroll-margin-top: 1rem;
 }

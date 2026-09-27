@@ -1,7 +1,5 @@
 import { HtmlBasePlugin, InputPathToUrlTransformPlugin } from "@11ty/eleventy";
-import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import markdownIt from "markdown-it";
-import metadata from "./content/_data/metadata.js";
 
 export default function(eleventyConfig) {
   
@@ -14,17 +12,22 @@ export default function(eleventyConfig) {
     breaks: false,
     linkify: true,
     typographer: true
-  }).disable("code");
+  }).disable(["code", "replacements"]); // replacements turns party labels like (R) into ®
 
   eleventyConfig.setLibrary("md", md);
 
-  eleventyConfig.addCollection("chapters", function(collectionApi) {
-    return collectionApi.getFilteredByGlob("content/chapters/*.md").sort((a, b) => {
-      const aOrder = a.data.order ?? 999;
-      const bOrder = b.data.order ?? 999;
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return a.inputPath.localeCompare(b.inputPath);
+  // Give each h2 an id and insert a list of links to them after the h1
+  eleventyConfig.addFilter("withToc", function(html) {
+    const slugify = eleventyConfig.getFilter("slugify");
+    const items = [];
+    const body = html.replace(/<h2>(.*?)<\/h2>/g, (match, inner) => {
+      const id = slugify(inner.replace(/<[^>]+>/g, ""));
+      items.push(`<li><a href="#${id}">${inner}</a></li>`);
+      return `<h2 id="${id}">${inner}</h2>`;
     });
+    if (items.length === 0) return html;
+    const toc = `<nav class="page-toc" aria-label="Sections"><ul>${items.join("")}</ul></nav>`;
+    return body.replace(/<\/h1>/, `</h1>\n${toc}`);
   });
 
   eleventyConfig.setServerOptions({
@@ -33,24 +36,6 @@ export default function(eleventyConfig) {
 
   eleventyConfig.addPlugin(HtmlBasePlugin);
   eleventyConfig.addPlugin(InputPathToUrlTransformPlugin);
-
-  eleventyConfig.addPlugin(feedPlugin, {
-    type: "atom",
-    outputPath: "/feed/feed.xml",
-    collection: {
-      name: "chapters",
-      limit: 10,
-    },
-    metadata: {
-      language: "en",
-      title: "My Literary Work",
-      subtitle: "A description of this work",
-      base: metadata.url,
-      author: {
-        name: "Your Name"
-      }
-    }
-  });
 
   return {
     dir: {

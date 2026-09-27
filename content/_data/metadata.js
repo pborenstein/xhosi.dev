@@ -1,11 +1,11 @@
 export default {
-  title: "Pamphlet",
+  title: "Election info",
   subtitle: "",
   url: "https://xhosi.dev/",
   language: "en",
-  description: "A description of this literary work",
+  description: "election info for Plymouth, NH",
   author: {
-    name: "Your Name",
+    name: "pborenstein",
   },
   image: "",
 }
