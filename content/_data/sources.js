@@ -3,26 +3,28 @@
 import fs from "node:fs"
 import path from "node:path"
 
-const dir = "content"
+const dirs = ["content/plymouth", "content/dover"]
 // Allows one level of parentheses inside URLs, e.g. Wikipedia disambiguation
 const linkRe = /\[([^\]]+)\]\((https?:\/\/(?:[^()\s]|\([^()\s]*\))+)\)/g
 
 export default function() {
   const bySite = new Map()
 
-  for (const file of fs.readdirSync(dir)) {
-    if (!file.endsWith(".md")) continue
-    const src = fs.readFileSync(path.join(dir, file), "utf8")
-    if (!/^type: person$/m.test(src) || file.includes("template")) continue
+  for (const dir of dirs) {
+    for (const file of fs.readdirSync(dir)) {
+      if (!file.endsWith(".md")) continue
+      const src = fs.readFileSync(path.join(dir, file), "utf8")
+      if (!/^type: person$/m.test(src) || file.includes("template")) continue
 
-    for (const line of src.split("\n").filter(l => l.startsWith("|"))) {
-      for (const [, text, url] of line.matchAll(linkRe)) {
-        const host = new URL(url).hostname.replace(/^www\./, "")
-        if (!bySite.has(host)) bySite.set(host, { host, count: 0, urls: new Set(), names: new Map() })
-        const site = bySite.get(host)
-        site.count++
-        site.urls.add(url)
-        site.names.set(text, (site.names.get(text) || 0) + 1)
+      for (const line of src.split("\n").filter(l => l.startsWith("|"))) {
+        for (const [, text, url] of line.matchAll(linkRe)) {
+          const host = new URL(url).hostname.replace(/^www\./, "")
+          if (!bySite.has(host)) bySite.set(host, { host, count: 0, urls: new Set(), names: new Map() })
+          const site = bySite.get(host)
+          site.count++
+          site.urls.add(url)
+          site.names.set(text, (site.names.get(text) || 0) + 1)
+        }
       }
     }
   }
