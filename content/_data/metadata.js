@@ -1,7 +1,7 @@
 export default {
   title: "Pamphlet",
   subtitle: "",
-  url: "https://example.com/",
+  url: "https://xhosi.dev/",
   language: "en",
   description: "A description of this literary work",
   author: {
